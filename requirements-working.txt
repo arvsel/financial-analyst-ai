@@ -1,0 +1,20 @@
+# Core dependencies
+requests==2.31.0
+beautifulsoup4==4.12.3
+pandas==2.2.0
+python-dotenv==1.0.0
+
+# AI and Embeddings
+anthropic==0.18.1
+openai==1.12.0
+pinecone-client==3.1.0
+
+# LangChain
+langchain==0.1.9
+langchain-community==0.0.24
+
+# Web interface (install streamlit without strict version)
+streamlit
+
+# Data processing helpers  
+numpy==1.26.3

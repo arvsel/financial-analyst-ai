@@ -1,0 +1,22 @@
+
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables (API keys - IMPORTANT!)
+.env
+
+# Data files (too large for Git)
+*.xml
+*.csv
+
+# Mac files
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
