@@ -1,0 +1,67 @@
+Question: What company is this filing for and what type of document is it?
+
+Filing Excerpt:
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+  <feed xmlns="http://www.w3.org/2005/Atom">
+    <author>
+      <email>webmaster@sec.gov</email>
+      <name>Webmaster</name>
+    </author>
+    <company-info>
+      <addresses>
+        <address type="mailing">
+          <city>REDMOND</city>
+          <state>WA</state>
+          <street1>ONE MICROSOFT WAY</street1>
+          <zip>98052-6399</zip>
+        </address>
+        <address type="business">
+          <city>REDMOND</city>
+          <phone>425-882-8080</phone>
+          <state>WA</state>
+          <street1>ONE MICROSOFT WAY</street1>
+          <zip>98052-6399</zip>
+        </address>
+      </addresses>
+      <assigned-sic>7372</assigned-sic>
+      <assigned-sic-desc>SERVICES-PREPACKAGED SOFTWARE</assigned-sic-desc>
+      <assigned-sic-href>https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&amp;SIC=7372&amp;owner=exclude&amp;count=10</assigned-sic-href>
+      <cik>0000789019</cik>
+      <cik-href>https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&amp;CIK=0000789019&amp;owner=exclude&amp;count=10</cik-href>
+      <conformed-name>MICROSOFT CORP</conformed-name>
+      <fiscal-year-end>0630</fiscal-year-end>
+      <state-location>WA</state-location>
+      <state-location-href>https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&amp;State=WA&amp;owner=exclude&amp;count=10</state-location-href>
+      <state-of-incorporation>WA</state-of-incorporation>
+    </company-info>
+    <entry>
+      <category label="form type" scheme="https://www.sec.gov/" term="10-K" />
+      <content type="text/xml">
+        <accession-number>0000950170-24-087843</accession-number>
+        <act>34</act>
+        <file-number>001-37845</file-number>
+        <file-number-href>https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&amp;filenum=001-37845&amp;owner=exclude&amp;count=10</file-number-href>
+        <filing-date>2024-07-30</filing-date>
+        <filing-href>https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/0000950170-24-087843-index.htm</filing-href>
+        <filing-type>10-K</filing-type>
+        <film-number>241157360</film-number>
+        <form-name>Annual report [Section 13 and 15(d), not S-K Item 405]</form-name>
+        <size>30 MB</size>
+        <xbrl_href>https://www.sec.gov/cgi-bin/viewer?action=view&amp;cik=789019&amp;accession_number=0000950170-24-087843&amp;xbrl_type=v</xbrl_href>
+      </content>
+      <id>urn:tag:sec.gov,2008:accession-number=0000950170-24-087843</id>
+      <link href="https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/0000950170-24-087843-index.htm" rel="alternate" type="text/html" />
+      <summary type="html"> &lt;b&gt;Filed:&lt;/b&gt; 2024-07-30 &lt;b&gt;AccNo:&lt;/b&gt; 0000950170-24-087843 &lt;b&gt;Size:&lt;/b&gt; 30 MB</summary>
+      <title>10-K  - Annual report [Section 13 and 15(d), not S-K Item 405]</title>
+      <updated>2024-07-30T16:06:22-04:00</updated>
+    </entry>
+    <entry>
+      <category label="form type" scheme="htt
+
+Answer: Based on the SEC filing excerpt provided:
+
+**Company:** Microsoft Corp (MICROSOFT CORP)
+
+**Document Type:** Form 10-K (Annual Report)
+
+The filing shows this is Microsoft Corporation's annual report filed under Section 13 and 15(d) of the Securities Exchange Act. The document was filed on July 30, 2024, and is 30 MB in size. Microsoft's corporate information shows they are headquartered at One Microsoft Way in Redmond, WA, with CIK number 0000789019, and are classified under SIC code 7372 for "Services-Prepackaged Software."
