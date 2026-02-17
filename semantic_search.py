@@ -28,7 +28,8 @@ def create_embedding(text):
     """Create embedding for a text"""
     response = client.embeddings.create(
         input=text,
-        model="text-embedding-3-small"
+        model="text-embedding-3-small",
+        dimensions=768
     )
     return response.data[0].embedding
 

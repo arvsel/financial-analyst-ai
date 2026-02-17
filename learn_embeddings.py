@@ -18,7 +18,8 @@ def get_embedding(text):
     """
     response = client.embeddings.create(
         input=text,
-        model="text-embedding-3-small"
+        model="text-embedding-3-small",
+        dimensions=768
     )
     
     # The embedding is a list of 1536 numbers
