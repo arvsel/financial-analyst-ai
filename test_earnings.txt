@@ -1,0 +1,35 @@
+cat > ~/Desktop/tesla_earnings.txt << 'EOF'
+Tesla Q4 2024 Earnings Report
+
+Executive Summary
+Tesla delivered exceptional Q4 2024 results, demonstrating strong operational execution and continued growth momentum across all business segments.
+
+Financial Highlights
+Total revenue reached $25.2 billion for the quarter, representing 37% growth year-over-year and exceeding analyst expectations. This strong performance was driven by robust vehicle deliveries and expanding energy storage deployments.
+
+Automotive Segment
+Automotive revenue totaled $21.3 billion, up 35% from the prior year quarter. The company delivered 422,000 vehicles globally during Q4, with Model 3 and Model Y continuing to show strong demand across all major markets including North America, Europe, and China.
+
+Production efficiency improvements and manufacturing scale benefits contributed to improved unit economics. The average selling price remained stable despite competitive pricing pressures in key markets.
+
+Energy Generation and Storage
+Energy revenue grew an impressive 54% year-over-year to $2.3 billion, marking a record quarter for this segment. Megapack deployments reached all-time highs as utility-scale storage projects accelerated globally. Residential solar installations also showed healthy growth.
+
+Profitability Metrics
+Operating margin improved significantly to 9.2%, up from 7.6% in Q3 2024, demonstrating the company's ability to achieve operational leverage. This margin expansion was achieved through manufacturing efficiencies, reduced logistics costs, and improved mix.
+
+Gross automotive margin excluding regulatory credits reached 18.9%, showing underlying business strength. The company continues to benefit from vertical integration and in-house battery production.
+
+Cash Flow and Balance Sheet
+Free cash flow generation was robust at $2.1 billion for the quarter, bringing full-year free cash flow to approximately $7.8 billion. Cash and investments stood at $29.1 billion at quarter end, providing substantial financial flexibility.
+
+The company repaid $500 million in debt during the quarter while maintaining a strong liquidity position. Capital expenditures totaled $2.4 billion, primarily focused on expanding production capacity and developing next-generation vehicle platforms.
+
+Outlook and Guidance
+Management provided positive guidance for 2025, expecting vehicle deliveries to grow approximately 20-30% year-over-year. The company plans to launch new vehicle variants and continue ramping Cybertruck production throughout the year.
+
+Investments in artificial intelligence and autonomous driving capabilities remain a strategic priority. The company expects to achieve significant cost reductions in battery production through new manufacturing processes currently being scaled.
+
+Risk Factors
+Key risks include potential supply chain disruptions, raw material cost volatility, and increasing competition in the electric vehicle market. Regulatory changes in key markets could also impact growth trajectory. The company continues to monitor macroeconomic conditions and their potential impact on consumer demand.
+EOF
