@@ -277,6 +277,11 @@ st.markdown("""
     a:hover {
         color: #93C5FD !important;
     }
+    
+    /* Checkbox */
+    .stCheckbox {
+        color: #E2E8F0 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -290,6 +295,7 @@ def init_clients():
 
 pc, openai_client, anthropic_client = init_clients()
 INDEX_NAME = "financial-docs"
+index = pc.Index(INDEX_NAME)
 
 # Helper functions
 def clean_text(content):
@@ -320,7 +326,6 @@ def upload_document(text, ticker, doc_type="custom"):
     
     st.info(f"✨ Created {len(chunks)} chunks from document")
     
-    index = pc.Index(INDEX_NAME)
     vectors = []
     uploaded_count = 0
     
@@ -366,6 +371,31 @@ def upload_document(text, ticker, doc_type="custom"):
     
     return uploaded_count
 
+# Get available tickers dynamically
+@st.cache_data(ttl=30)
+def get_available_tickers():
+    """Get unique tickers from database"""
+    base_tickers = ["All Companies", "MSFT", "AAPL", "TSLA"]
+    
+    try:
+        results = index.query(
+            vector=[0.1] * 768,
+            top_k=50,
+            include_metadata=True
+        )
+        
+        found_tickers = set()
+        for match in results['matches']:
+            ticker = match['metadata'].get('ticker')
+            if ticker:
+                found_tickers.add(ticker)
+        
+        all_tickers = ["All Companies"] + sorted(list(found_tickers))
+        return all_tickers
+        
+    except:
+        return base_tickers
+
 # Enhanced Header
 st.markdown("""
     <div style='text-align: center; padding: 2rem 0 1rem 0;'>
@@ -382,10 +412,10 @@ st.markdown("""
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    st.metric("🏢 Companies", "3+", delta="MSFT, AAPL, TSLA", help="Indexed companies")
+    ticker_count = len(get_available_tickers()) - 1  # Exclude "All Companies"
+    st.metric("🏢 Companies", f"{ticker_count}", help="Indexed companies")
 
 with col2:
-    index = pc.Index(INDEX_NAME)
     stats = index.describe_index_stats()
     st.metric("📄 Chunks", f"{stats['total_vector_count']:,}", delta="Live", help="Total document chunks")
 
@@ -405,9 +435,10 @@ with tab1:
     # Sidebar filters
     st.sidebar.header("🔍 Search Filters")
     
+    ticker_options = get_available_tickers()
     ticker_filter = st.sidebar.selectbox(
         "Company",
-        ["All Companies", "MSFT", "AAPL", "TSLA"],
+        ticker_options,
         index=0
     )
     
@@ -540,13 +571,10 @@ Answer:"""
                         relevance = doc['score']
                         if relevance >= 0.8:
                             emoji = "🟢"
-                            badge_color = "#10B981"
                         elif relevance >= 0.6:
                             emoji = "🟡"
-                            badge_color = "#FBBF24"
                         else:
                             emoji = "🔴"
-                            badge_color = "#EF4444"
                         
                         with st.expander(f"{emoji} Source {i}: {doc['ticker']} - {doc['section'].upper().replace('_', ' ')} (Relevance: {doc['score']:.1%})"):
                             st.markdown(f"**Relevance Score:** {doc['score']:.1%}")
@@ -625,6 +653,148 @@ with tab2:
                     import traceback
                     st.code(traceback.format_exc())
     
+    # Add new company from SEC
+    st.markdown("---")
+    st.markdown("### 🏢 Add New Company from SEC")
+    st.markdown("Automatically fetch and index a company's latest 10-K filing from SEC EDGAR.")
+    
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        new_ticker = st.text_input(
+            "Enter Company Ticker",
+            placeholder="e.g., NVDA, GOOGL, AMZN",
+            max_chars=10,
+            key="new_ticker_input"
+        ).upper()
+    
+    with col2:
+        st.markdown("**Supported filings:**")
+        st.markdown("- Latest 10-K annual report")
+        st.markdown("- Automatically extracts sections")
+        st.markdown("- ~2-3 min processing time")
+    
+    if new_ticker:
+        if st.button(f"📥 Fetch and Index {new_ticker} 10-K", type="primary", use_container_width=True):
+            
+            # Check if already exists
+            test_results = index.query(
+                vector=[0.1] * 768,
+                top_k=1,
+                include_metadata=True,
+                filter={'ticker': new_ticker}
+            )
+            
+            if test_results['matches']:
+                st.warning(f"⚠️ {new_ticker} already exists in database. Proceeding will add more data.")
+                proceed = st.checkbox(f"Add more data for {new_ticker} anyway?")
+                if not proceed:
+                    st.stop()
+            
+            with st.spinner(f"🔄 Fetching {new_ticker} 10-K from SEC EDGAR..."):
+                try:
+                    # Import the parser
+                    from parse_10k_sections import fetch_and_parse_10k_sections
+                    
+                    # Fetch and parse
+                    st.info("📡 Downloading from SEC...")
+                    chunks = fetch_and_parse_10k_sections(new_ticker)
+                    
+                    if not chunks:
+                        st.error(f"❌ Could not fetch 10-K for {new_ticker}. Ticker might be invalid or filing not available.")
+                    else:
+                        st.success(f"✅ Downloaded and parsed {len(chunks)} chunks!")
+                        
+                        # Upload to Pinecone
+                        st.info("☁️ Uploading to Pinecone...")
+                        
+                        vectors = []
+                        uploaded_count = 0
+                        
+                        progress_bar = st.progress(0)
+                        status_text = st.empty()
+                        
+                        for i, chunk_data in enumerate(chunks):
+                            status_text.text(f"Processing chunk {i+1}/{len(chunks)}...")
+                            progress_bar.progress((i + 1) / len(chunks))
+                            
+                            try:
+                                # Create embedding
+                                response = openai_client.embeddings.create(
+                                    input=chunk_data['text'],
+                                    model="text-embedding-3-small",
+                                    dimensions=768
+                                )
+                                embedding = response.data[0].embedding
+                                
+                                # Prepare vector
+                                vector_id = f"{new_ticker}_{chunk_data['section']}_{chunk_data['chunk_id']}"
+                                
+                                vector = (
+                                    vector_id,
+                                    embedding,
+                                    {
+                                        'text': chunk_data['text'],
+                                        'ticker': new_ticker,
+                                        'section': chunk_data['section'],
+                                        'chunk_id': chunk_data['chunk_id'],
+                                        'doc_type': '10-K'
+                                    }
+                                )
+                                vectors.append(vector)
+                                
+                                # Upload in batches of 100
+                                if len(vectors) >= 100:
+                                    index.upsert(vectors=vectors)
+                                    uploaded_count += len(vectors)
+                                    vectors = []
+                                
+                            except Exception as e:
+                                st.warning(f"⚠️ Error on chunk {i}: {str(e)}")
+                                continue
+                        
+                        # Upload remaining
+                        if vectors:
+                            index.upsert(vectors=vectors)
+                            uploaded_count += len(vectors)
+                        
+                        progress_bar.empty()
+                        status_text.empty()
+                        
+                        st.balloons()
+                        st.success(f"""🎉 Successfully added {new_ticker}!
+                        
+**Summary:**
+- Total chunks uploaded: {uploaded_count}
+- Sections extracted: {len(set(c['section'] for c in chunks))}
+- Ready to query!
+
+💡 **Next steps:**
+1. Go to "Ask Questions" tab
+2. Select "{new_ticker}" in company filter
+3. Start asking questions!
+                        """)
+                        
+                        # Show sections found
+                        with st.expander("📋 Sections Extracted"):
+                            sections_found = {}
+                            for chunk in chunks:
+                                section = chunk['section']
+                                sections_found[section] = sections_found.get(section, 0) + 1
+                            
+                            for section, count in sections_found.items():
+                                st.write(f"- **{section.replace('_', ' ').title()}**: {count} chunks")
+                        
+                        # Clear cache so new ticker appears
+                        st.cache_data.clear()
+                
+                except ImportError:
+                    st.error("❌ Parser not found. Make sure `parse_10k_sections.py` exists in your project directory.")
+                except Exception as e:
+                    st.error(f"❌ Error: {str(e)}")
+                    import traceback
+                    st.code(traceback.format_exc())
+    
     # Stats
     st.markdown("---")
     st.markdown("### 📊 Database Statistics")
@@ -642,7 +812,7 @@ with tab2:
         
         results = index.query(
             vector=[0.1] * 768,
-            top_k=10,
+            top_k=20,
             include_metadata=True
         )
         
@@ -667,11 +837,14 @@ with tab3:
     # Company selection
     col1, col2 = st.columns(2)
     
+    # Get available companies (excluding "All Companies")
+    available_companies = [t for t in ticker_options if t != "All Companies"]
+    
     with col1:
         companies_to_compare = st.multiselect(
             "Select companies to compare (2-4)",
-            ["MSFT", "AAPL", "TSLA"],
-            default=["MSFT", "AAPL"],
+            available_companies,
+            default=available_companies[:2] if len(available_companies) >= 2 else available_companies,
             max_selections=4,
             help="Choose 2-4 companies for comparison"
         )
@@ -848,7 +1021,7 @@ Generated: {time.strftime('%Y-%m-%d %H:%M:%S')}
     with col2:
         st.markdown("""
         **Risk Assessment**
-        - Companies: All three
+        - Companies: All available
         - Focus: Risk Factors, Market Position
         - Perfect for: Due diligence and investment decisions
         """)
@@ -869,14 +1042,17 @@ provide instant insights with citations.
 **📈 Capabilities:**
 - Real-time SEC filing analysis
 - Custom document upload
+- Auto-fetch from SEC EDGAR
 - Section-aware filtering
 - Citation-backed answers
+- Company comparisons
 
 **💡 Pro Tips:**
 - Use filters for targeted search
 - Upload your own reports
+- Add new companies from SEC
 - Check relevance scores
-- Expand sources for full context
+- Download comparison reports
 """)
 
 st.sidebar.markdown("---")
