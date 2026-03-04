@@ -1,21 +1,9 @@
-# Core dependencies
-requests==2.31.0
+streamlit==1.39.0
+pinecone-client==5.0.1
+openai==1.54.4
+anthropic==0.39.0
+python-dotenv==1.0.1
 beautifulsoup4==4.12.3
-pandas==2.2.0
-python-dotenv==1.0.0
-
-# AI and Embeddings (for later weeks)
-anthropic==0.18.1
-openai==1.12.0
-pinecone-client==3.1.0
-
-# LangChain (for RAG system)
-langchain==0.1.9
-langchain-community==0.0.24
-
-# Web interface (for Week 5)
-streamlit==1.31.0
-
-# Data processing helpers
-numpy==1.26.3
-lxml==5.1.0
+lxml==5.3.0
+plotly==5.24.1
+sec-edgar-downloader==5.1.0
